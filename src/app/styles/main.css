@@ -1,0 +1,36 @@
+@import 'vars.css';
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  box-sizing: border-box;
+  font-weight: normal;
+}
+
+html {
+  min-height: 100vh;
+  font: var(--baseFontWeight) var(--baseFontSize)/var(--baseLineHeight) var(--baseFontFamily);
+}
+
+body {
+  color: var(--baseColor);
+  background: var(--baseBgColor);
+  font-size: 2rem;
+  transition:
+      color 0.5s,
+      background-color 0.5s;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  max-width: var(--gridWidth);
+  margin: auto;
+  padding: 0 var(--gridPadding);
+  width: 100%;
+}

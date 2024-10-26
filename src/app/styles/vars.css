@@ -1,0 +1,33 @@
+:root {
+  /* Base font settings */
+  --baseFontSize: 8px; /* 1rem */
+  --baseFontFamily: Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    sans-serif;
+  --baseLineHeight: 1.5;
+  --baseFontWeight: normal;
+
+
+  /* Base site grid settings */
+  --gridWidth: 1920px;
+  --gridPadding: 112px;
+
+  @media (max-width: 1280px) {
+    --baseFontSize: 7px; /* 1rem */
+    --gridPadding: 32px;
+  }
+
+  @media (max-width: 768px) {
+    --baseFontSize: 6px; /* 1rem */
+    --gridPadding: 16px;
+  }
+}
