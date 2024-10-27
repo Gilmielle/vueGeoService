@@ -1,11 +1,14 @@
 import { API_ENDPOINTS, API_PASSWORD, API_USERNAME } from '@/shared/constants'
 
-interface getFormServerParams {
+type requestMethodsTypes = "GET" | "POST";
+
+interface getFormServerParamsTypes {
   url: string,
-  method?: "GET" | "POST",
-  body?: BodyInit | FormData | Object | null | undefined,
+  method?: requestMethodsTypes,
+  body?: BodyInit | object | null | undefined,
   headers?: HeadersInit,
   type?: string,
+  contentType?: string
 }
 
 export class ApiClient {
@@ -63,7 +66,8 @@ export class ApiClient {
       url = "",
       type = 'text',
       headers,
-    }: getFormServerParams,
+      contentType,
+    }: getFormServerParamsTypes,
     isIncludeSession = true
   ) {
     return await this.getFormServer(
@@ -72,6 +76,7 @@ export class ApiClient {
         method: "GET",
         type,
         headers,
+        contentType,
       },
       isIncludeSession
     )
@@ -83,7 +88,8 @@ export class ApiClient {
       body = null,
       type = 'text',
       headers,
-    }: getFormServerParams,
+      contentType,
+    }: getFormServerParamsTypes,
     isIncludeSession = true
   ) {
 
@@ -93,7 +99,8 @@ export class ApiClient {
         method: "POST",
         body,
         type,
-        headers
+        headers,
+        contentType,
       },
       isIncludeSession
     )
@@ -104,15 +111,14 @@ export class ApiClient {
       url = this.baseUrl,
       method = "GET",
       body = null,
-      headers = {
-        "Content-Type": "application/json"
-      },
+      headers = new Headers(),
       type = "text",
-    }: getFormServerParams,
+      contentType = "application/json",
+    }: getFormServerParamsTypes,
     isIncludeSession = true
   ) {
-    let requestBody = body ?? {};
-    let requestUrl: URL = new URL(url);
+    let requestBody = typeof body === "string" ? JSON.parse(body || "{}") : body;
+    const requestUrl: URL = new URL(url);
     if (isIncludeSession && !!this.session) {
       if (method === 'POST') {
         requestBody = {
@@ -124,11 +130,25 @@ export class ApiClient {
       }
     }
 
-    return await fetch(requestUrl.toString(), { method, body: JSON.stringify(requestBody), headers })
+    const requestHeaders = this.getHeaders(headers, contentType);
+
+    return await fetch(requestUrl.toString(), {
+      method,
+      body: method === "GET" ? null : JSON.stringify(requestBody),
+      headers: requestHeaders
+    })
       .then(async (resp: Response) => {
         return await this.getResponse(resp, type)
       })
   }
+
+  getHeaders(headers: HeadersInit, contentType: string) {
+    const result = new Headers(headers);
+    if (contentType !== "auto") {
+      result.set("Content-Type", contentType)
+    }
+    return result;
+  };
 
   async getResponse(resp: Response, type: string){
     const { ok, status } = resp;

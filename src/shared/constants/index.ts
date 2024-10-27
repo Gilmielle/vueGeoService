@@ -6,11 +6,11 @@ const API_USERNAME = config.API_USERNAME;
 
 const API_ENDPOINTS = {
   login: "/ServiceJSON/Login",
-  enumSchemas: "/ServiceJSON/EnumSchemas",
-  enumDevices: "/ServiceJSON/EnumDevices",
-  enumGeoFences: "/ServiceJSON/EnumGeoFences",
-  getTrack: "/ServiceJSON/GetTrack",
-  getGeofences: "/ServiceJSON/GetGeofences",
+  enumSchemas: "/ServiceJSON/EnumSchemas", // получает список схем
+  enumDevices: "/ServiceJSON/EnumDevices", // получает список ТС
+  enumGeoFences: "/ServiceJSON/EnumGeoFences", // получает список геозон
+  getTrack: "/ServiceJSON/GetTrack", // Получение трека (даты/время, координаты, скорость) прибора = ТС
+  getGeofences: "/ServiceJSON/GetGeofences", // Получение информации о геозонах (точки для полигонов и т.д.)
 };
 
 export {

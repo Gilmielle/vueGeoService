@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import Header from '@/widgets/Header/Header.vue';
 import Map from '@/shared/ui/Map/Map.vue';
-import { ApiClient } from '@/shared/lib/services/ApiClient'
 import { onBeforeMount } from 'vue'
-import { API_URL } from '@/shared/constants'
+import VehicleList from '@/widgets/VehicleList/VehicleList.vue'
+import { useInitialData } from '@/shared/lib/hooks/useInitialData'
 
-onBeforeMount(() => {
-  new ApiClient(API_URL);
+
+onBeforeMount(async () => {
+  await useInitialData();
 })
 </script>
 
@@ -16,6 +17,7 @@ onBeforeMount(() => {
       <Header />
     </div>
     <main class="pageLayout__main container">
+      <VehicleList />
       <Map />
     </main>
   </div>
