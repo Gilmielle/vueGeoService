@@ -1,43 +1,69 @@
 <template>
-  <div class="map" ref="map-root" />
+  <ol-map
+    :loadTilesWhileAnimating="true"
+    :loadTilesWhileInteracting="true"
+    style="height: 1000px"
+  >
+    <ol-view
+      ref="view"
+      :center="center"
+      :rotation="rotation"
+      :zoom="zoom"
+      :projection="projection"
+    />
+
+    <ol-tile-layer>
+      <ol-source-osm />
+    </ol-tile-layer>
+
+    <ol-vector-layer>
+      <ol-source-vector>
+        <ol-feature>
+          <template v-for="(coords, index) in coordinates" :key="index">
+            <ol-geom-multi-line-string
+              :coordinates="coords"
+            ></ol-geom-multi-line-string>
+          </template>
+          <ol-style>
+            <ol-style-stroke
+              :color="strokeColor"
+              :width="strokeWidth"
+            ></ol-style-stroke>
+          </ol-style>
+        </ol-feature>
+      </ol-source-vector>
+    </ol-vector-layer>
+  </ol-map>
 </template>
 
-<script lang="ts">
-import View from 'ol/View'
-import Map from 'ol/Map'
-import TileLayer from 'ol/layer/Tile'
-import OSM from 'ol/source/OSM'
-import 'ol/ol.css'
+<script setup lang="ts">
+import { ref, watch } from 'vue'
+import { useGeoServiceStore } from '@/app/providers'
+import { fromLonLat } from 'ol/proj';
 
-export default {
-  name: 'MapContainer',
-  components: {},
-  props: {},
-  mounted() {
-    // this is where we create the OpenLayers map
-    new Map({
-      // the map will be created using the 'map-root' ref
-      target: this.$refs['map-root'],
-      layers: [
-        // adding a background tiled layer
-        new TileLayer({
-          source: new OSM() // tiles are served by OpenStreetMap
-        }),
-      ],
+const center = ref(fromLonLat([ 55.1028469,  61.3586438 ]));
+const projection = ref('EPSG:3857');
+const zoom = ref(10);
+const rotation = ref(0);
+const strokeWidth = ref(5);
+const strokeColor = ref("red");
+const coordinates = ref([])
 
-      view: new View({
-        center: [4190701.0645526173, 7511438.408408914],
-        zoom: 10,
-      }),
-    })
-  },
-}
+const store = useGeoServiceStore();
+
+watch(() => store.getVisibleTracks.length, async () => {
+  const coords = store.getVisibleTracks.map((item) => {
+    if(!!item.Coordinates) {
+      return item.Coordinates.map(coordPair => fromLonLat(coordPair))
+    }
+  }).filter(item => !!item)
+  if(!!coords.length) {
+    center.value = coords[0][0]
+  }
+  coordinates.value = [coords]
+})
 </script>
 
 <style lang="scss">
-.map {
-  --mapSize: 1000px;
-  width: var(--mapSize);
-  height: var(--mapSize);
-}
+
 </style>
